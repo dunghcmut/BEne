@@ -34,6 +34,6 @@ public class MenuOrder {
     private Status status;
 
     public enum Status {
-        pending, cooking, complete
+        PENDING, COOKING, complete
     }
 }

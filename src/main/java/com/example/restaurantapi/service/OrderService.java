@@ -1,11 +1,13 @@
 package com.example.restaurantapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.restaurantapi.dto.OrderDetailsResponseDTO;
 import com.example.restaurantapi.dto.OrderRequestDTO;
 import com.example.restaurantapi.dto.OrderResponseDTO;
 import com.example.restaurantapi.dto.UpdateOrderStatusDTO;
@@ -29,11 +31,10 @@ public class OrderService {
     public OrderResponseDTO confirmOrder(OrderRequestDTO request) {
         MenuOrder order = new MenuOrder();
         order.setTableID(request.getTableNumber());
-        order.setStatus(MenuOrder.Status.pending);
+        order.setStatus(MenuOrder.Status.PENDING);
         MenuOrder savedOrder = menuOrderRepository.save(order);
 
         for (OrderRequestDTO.OrderItemDTO itemDTO : request.getItems()) {
-            // Grok3 
             MenuItem menuItem = menuItemRepository.findById(itemDTO.getFoodId())
                     .orElseThrow(() -> new RuntimeException("Notfound"));
             OrderDetails details = new OrderDetails();
@@ -50,8 +51,34 @@ public class OrderService {
         return response;
     }
 
-    public List<MenuOrder> getPendingOrders() {
-        return menuOrderRepository.findByStatus(MenuOrder.Status.pending);
+    public List<OrderDetailsResponseDTO> getPendingOrders() {
+        // Lấy danh sách đơn hàng PENDING
+        List<MenuOrder> PENDINGOrders = menuOrderRepository.findByStatus(MenuOrder.Status.PENDING);
+        List<OrderDetailsResponseDTO> responseList = new ArrayList<>();
+
+        // Duyệt qua từng đơn hàng
+        for (MenuOrder order : PENDINGOrders) {
+            OrderDetailsResponseDTO responseDTO = new OrderDetailsResponseDTO();
+            responseDTO.setOrderId(order.getOrderID());
+            responseDTO.setTableId(order.getTableID());
+
+            // Lấy chi tiết đơn hàng
+            List<OrderDetails> orderDetails = orderDetailsRepository.findByMenuOrder(order);
+            List<OrderDetailsResponseDTO.OrderItemDetailsDTO> items = new ArrayList<>();
+
+            // Map chi tiết món ăn
+            for (OrderDetails detail : orderDetails) {
+                OrderDetailsResponseDTO.OrderItemDetailsDTO itemDTO = new OrderDetailsResponseDTO.OrderItemDetailsDTO();
+                itemDTO.setFoodName(detail.getMenuItem().getName()); // Giả sử MenuItem có field name
+                itemDTO.setQuantity(detail.getQuantity());
+                items.add(itemDTO);
+            }
+
+            responseDTO.setItems(items);
+            responseList.add(responseDTO);
+        }
+
+        return responseList;
     }
 
     public OrderResponseDTO updateOrderStatus(Integer orderId, UpdateOrderStatusDTO dto) {

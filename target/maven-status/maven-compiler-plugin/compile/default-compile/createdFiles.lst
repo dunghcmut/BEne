@@ -1,4 +1,5 @@
 com/example/restaurantapi/repository/MenuOrderRepository.class
+com/example/restaurantapi/dto/OrderDetailsResponseDTO$OrderItemDetailsDTO.class
 com/example/restaurantapi/entity/MenuOrder.class
 com/example/restaurantapi/entity/TableInfo.class
 com/example/restaurantapi/dto/OrderResponseDTO.class
@@ -8,6 +9,7 @@ com/example/restaurantapi/service/MenuService.class
 com/example/restaurantapi/repository/MenuItemRepository.class
 com/example/restaurantapi/controller/OrderController.class
 com/example/restaurantapi/entity/MenuOrder$Status.class
+com/example/restaurantapi/dto/OrderDetailsResponseDTO.class
 com/example/restaurantapi/RestaurantApiApplication.class
 com/example/restaurantapi/entity/MenuItem.class
 com/example/restaurantapi/entity/OrderDetails.class
