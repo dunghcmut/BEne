@@ -29,7 +29,7 @@ public class OrderService {
     public OrderResponseDTO confirmOrder(OrderRequestDTO request) {
         MenuOrder order = new MenuOrder();
         order.setTableID(request.getTableNumber());
-        order.setStatus(MenuOrder.Status.PENDING);
+        order.setStatus(MenuOrder.Status.pending);
         MenuOrder savedOrder = menuOrderRepository.save(order);
 
         for (OrderRequestDTO.OrderItemDTO itemDTO : request.getItems()) {
@@ -51,7 +51,7 @@ public class OrderService {
     }
 
     public List<MenuOrder> getPendingOrders() {
-        return menuOrderRepository.findByStatus(MenuOrder.Status.PENDING);
+        return menuOrderRepository.findByStatus(MenuOrder.Status.pending);
     }
 
     public OrderResponseDTO updateOrderStatus(Integer orderId, UpdateOrderStatusDTO dto) {
