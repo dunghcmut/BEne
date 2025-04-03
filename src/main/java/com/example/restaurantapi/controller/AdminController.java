@@ -1,16 +1,11 @@
 package com.example.restaurantapi.controller;
 
 import java.util.List;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.restaurantapi.dto.MenuItemDTO;
 import com.example.restaurantapi.dto.TableInfoDTO;
@@ -19,6 +14,7 @@ import com.example.restaurantapi.service.MenuService;
 import com.example.restaurantapi.service.TableService;
 
 import jakarta.validation.Valid;
+import com.fasterxml.jackson.databind.ObjectMapper; // Thêm import này
 
 @RestController
 @RequestMapping("/api/admin")
@@ -29,13 +25,26 @@ public class AdminController {
     
     @Autowired
     private TableService tableService;
+
+    @Autowired
+    private ObjectMapper objectMapper; // Thêm dependency injection cho ObjectMapper
+
     @GetMapping("/tables")
     public List<TableInfoDTO> getAllTables() {
         return tableService.getAllTables();
     }
-    @PostMapping("/menu")
-    public MenuItemDTO addMenuItem(@RequestBody MenuItemDTO dto) {
-        return menuService.addMenuItem(dto);
+
+    @PostMapping(value = "/menu", consumes = {"multipart/form-data"})
+    public MenuItemDTO addMenuItem(
+            @RequestPart("menuItem") String menuItemJson, // Nhận chuỗi JSON thay vì DTO
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        try {
+            // Parse chuỗi JSON thành MenuItemDTO
+            MenuItemDTO dto = objectMapper.readValue(menuItemJson, MenuItemDTO.class);
+            return menuService.addMenuItem(dto, image);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new IOException("Invalid JSON format for menuItem", e);
+        }
     }
 
     @PutMapping("/menu/{id}")
@@ -48,7 +57,7 @@ public class AdminController {
         menuService.deleteMenuItem(id);
     }
 
-    // API cho TableInfo với DTO riêng grok3
+    // API cho TableInfo với DTO riêng
     @PostMapping("/table")
     public TableInfoDTO addTable(@Valid @RequestBody TableRequestDTO dto) {
         return tableService.addTable(dto);
