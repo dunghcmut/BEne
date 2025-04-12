@@ -19,10 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper; // Thêm import này
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-    
+
     @Autowired
     private MenuService menuService;
-    
+
     @Autowired
     private TableService tableService;
 

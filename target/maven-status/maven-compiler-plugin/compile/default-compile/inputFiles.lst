@@ -12,6 +12,7 @@
 /home/dung/BEne/src/main/java/com/example/restaurantapi/repository/MenuOrderRepository.java
 /home/dung/BEne/src/main/java/com/example/restaurantapi/dto/TableInfoDTO.java
 /home/dung/BEne/src/main/java/com/example/restaurantapi/controller/AdminController.java
+/home/dung/BEne/src/main/java/com/example/restaurantapi/config/WebConfig.java
 /home/dung/BEne/src/main/java/com/example/restaurantapi/service/TableStatusService.java
 /home/dung/BEne/src/main/java/com/example/restaurantapi/dto/TableRequestDTO.java
 /home/dung/BEne/src/main/java/com/example/restaurantapi/entity/Users.java

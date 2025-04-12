@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,8 +22,8 @@ public class MenuService {
     @Autowired
     private MenuItemRepository menuItemRepository;
 
-    private static final String UPLOAD_DIR = "/home/dung/BEne/images/";
- // Thư mục lưu ảnh
+    @Value("${custom.image-folder}")
+    private String uploadDir;
 
     public List<MenuItemDTO> getTodayMenu() {
         return menuItemRepository.findByIsRecommendTrueAndStatus(MenuItem.Status.available)
@@ -32,7 +33,7 @@ public class MenuService {
     public MenuItemDTO getMenuItemById(Integer id) {
         return menuItemRepository.findById(id)
                 .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Notfound"));
+                .orElseThrow(() -> new RuntimeException("Menu item with ID " + id + " not found"));
     }
 
     public MenuItemDTO addMenuItem(MenuItemDTO dto, MultipartFile image) throws IOException {
@@ -44,13 +45,12 @@ public class MenuService {
         item.setPrice(dto.getPrice());
         item.setStatus(MenuItem.Status.valueOf(dto.getStatus()));
 
-        // Xử lý upload ảnh nếu có
         if (image != null && !image.isEmpty()) {
             String imageFileName = saveImage(image);
             String imageUrl = "/images/" + imageFileName;
             item.setLink(imageUrl);
         } else {
-            item.setLink(dto.getImageUrl()); // Giữ nguyên imageUrl từ DTO nếu không có file
+            item.setLink(dto.getImageUrl());
         }
 
         MenuItem saved = menuItemRepository.save(item);
@@ -59,7 +59,7 @@ public class MenuService {
 
     public MenuItemDTO updateMenuItem(Integer id, MenuItemDTO dto) {
         MenuItem item = menuItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notfound"));
+                .orElseThrow(() -> new RuntimeException("Menu item with ID " + id + " not found"));
         item.setName(dto.getName());
         item.setDescription(dto.getDescription());
         item.setCategory(dto.getCategory());
@@ -89,18 +89,22 @@ public class MenuService {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-        // Tạo thư mục nếu chưa tồn tại
-        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (uploadDir == null || uploadDir.isEmpty()) {
+            throw new IllegalStateException("Upload directory is not configured.");
+        }
+
+        Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // Tạo tên file duy nhất
         String originalFileName = image.getOriginalFilename();
-        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String newFileName = UUID.randomUUID().toString() + fileExtension;
+        String fileExtension = "";
+        if (originalFileName != null && originalFileName.contains(".")) {
+            fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        }
 
-        // Lưu file vào thư mục
+        String newFileName = UUID.randomUUID().toString() + fileExtension;
         Path filePath = uploadPath.resolve(newFileName);
         Files.write(filePath, image.getBytes());
 

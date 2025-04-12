@@ -3,6 +3,7 @@ com/example/restaurantapi/dto/OrderDetailsResponseDTO$OrderItemDetailsDTO.class
 com/example/restaurantapi/entity/MenuOrder.class
 com/example/restaurantapi/entity/TableInfo.class
 com/example/restaurantapi/dto/OrderResponseDTO.class
+com/example/restaurantapi/config/WebConfig.class
 com/example/restaurantapi/repository/TableInfoRepository.class
 com/example/restaurantapi/dto/OrderRequestDTO.class
 com/example/restaurantapi/service/MenuService.class

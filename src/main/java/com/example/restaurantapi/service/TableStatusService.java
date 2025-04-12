@@ -17,12 +17,6 @@ public class TableStatusService {
         this.entityManager = entityManager;
     }
 
-
-
-
-
-
-
     @Scheduled(fixedRate = 60000) 
 @Transactional
 public void resetTableStatus() {
