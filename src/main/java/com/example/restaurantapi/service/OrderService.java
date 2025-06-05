@@ -36,7 +36,7 @@ public class OrderService {
 
         for (OrderRequestDTO.OrderItemDTO itemDTO : request.getItems()) {
             MenuItem menuItem = menuItemRepository.findById(itemDTO.getFoodId())
-                    .orElseThrow(() -> new RuntimeException("Notfound"));
+                    .orElseThrow(() -> new RuntimeException("Not found"));
             OrderDetails details = new OrderDetails();
             details.setMenuItem(menuItem);
             details.setMenuOrder(savedOrder);
