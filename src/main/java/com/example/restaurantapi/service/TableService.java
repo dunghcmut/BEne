@@ -53,7 +53,7 @@ public class TableService {
     @Transactional
     public TableInfoDTO updateTable(Integer id, TableRequestDTO dto) {
         TableInfo tableInfo = tableInfoRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Notfound " + id));
+            .orElseThrow(() -> new RuntimeException("Not found " + id));
         
         tableInfo.setStatus(dto.getStatus());
         tableInfo.setPhonenumber(dto.getPhonenumber());
@@ -73,7 +73,7 @@ public class TableService {
     @Transactional
     public void deleteTable(Integer id) {
         TableInfo tableInfo = tableInfoRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Notfound " + id));
+            .orElseThrow(() -> new RuntimeException("Not found " + id));
         tableInfoRepository.delete(tableInfo);
     }
 }
