@@ -85,7 +85,10 @@ public class OrderService {
         MenuOrder order = menuOrderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
-        MenuOrder.Status newStatus = MenuOrder.Status.valueOf(dto.getStatus().toUpperCase());
+        MenuOrder.Status newStatus = java.util.Arrays.stream(MenuOrder.Status.values())
+                .filter(s -> s.name().equalsIgnoreCase(dto.getStatus()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid status"));
         order.setStatus(newStatus);
         menuOrderRepository.save(order);
 
