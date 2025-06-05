@@ -5,7 +5,7 @@ import { sleep, check } from 'k6';
 export const options = {
   stages: [
     { duration: '10s', target: 100 }, // Tăng lên 10 người dùng trong 10 giây
-    { duration: '20s', target: 200 }, // Duy trì 50 người dùng trong 20 giây
+    { duration: '20s', target: 200 }, // Duy trì 200 người dùng trong 20 giây
     { duration: '10s', target: 0 },  // Giảm về 0 trong 10 giây
   ],
   thresholds: {
